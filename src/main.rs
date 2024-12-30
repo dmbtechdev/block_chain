@@ -41,7 +41,7 @@ fn main() {
         println!("{}{}{}","Simulation Run: ".red(),simulate," started...\n".red());
 
         // Vector to store the valid transactions
-        let mut transaction_pool : Vec<Transaction> = vec![]; // let mut transactions_pool : Vec<Transaction> = vec![];
+        let mut transaction_pool : Vec<Transaction> = vec![];
         
         // Simulate transactions
         for index in 1..5 { 
@@ -93,14 +93,25 @@ fn main() {
 
                 thread::spawn(move || {
 
+                    println!("{}{}{}","Thread no: ".purple(),i," started mining");
+
                     loop {
                         clone_block.mine(difficulty, 10000000 * (i+1) as u64);
                         if mining_data.lock().unwrap().mined {break;}
+                        
                         if !mining_data.lock().unwrap().mined {
                             mining_data.lock().unwrap().mined = true; // Set mined status to true
+                        
                             println!("{}{}{}{}","Thread no: ".purple(),i," successfully mined a block. Proof of work: ".purple(), clone_block.proof_of_work);
-                            mining_data.lock().unwrap().hash = clone_block.hash.clone();
-                            mining_data.lock().unwrap().proof_of_work = clone_block.proof_of_work;
+
+                            if mining_data.lock().unwrap().hash != String::default() {break;}
+                            else {
+                                mining_data.lock().unwrap().hash = clone_block.hash.clone();
+                                if mining_data.lock().unwrap().proof_of_work != 0 {break;}
+                                else {
+                                    mining_data.lock().unwrap().proof_of_work = clone_block.proof_of_work;
+                                }
+                            }
                         }
                     }
                 })
