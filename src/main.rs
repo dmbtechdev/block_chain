@@ -1,4 +1,4 @@
-use block_chain::models::block::{Block,Mining};
+use block_chain::models::block::{Block, Mining};
 use block_chain::models::blockchain::Blockchain;
 use block_chain::models::{transaction::Transaction, wallet::Wallet};
 use colored::Colorize;
